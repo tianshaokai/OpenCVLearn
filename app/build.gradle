@@ -8,6 +8,13 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
+
+        externalNativeBuild {
+            cmake {
+                abiFilters 'arm64-v8a', "armeabi-v7a", 'x86', 'x86_64'
+                cppFlags ""
+            }
+        }
     }
     buildTypes {
         release {
@@ -15,7 +22,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
     //这里是我们添加的jni文件夹配置
 //    sourceSets {
 //        main {
