@@ -2,17 +2,19 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
+    long time = System.currentTimeMillis() / 1000;
     defaultConfig {
         applicationId "com.tianshaokai.opencvocr"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 1
+        versionCode time.intValue()
         versionName "1.0"
 
         externalNativeBuild {
             cmake {
                 abiFilters 'arm64-v8a', "armeabi-v7a", 'x86', 'x86_64'
                 cppFlags "-std=c++11"
+                arguments "-DANDROID_STL=c++_shared"
             }
         }
     }
