@@ -5,5 +5,6 @@ public class OpenCVLearn {
         System.loadLibrary("opencv_learn");
     }
 
-    public native void ocrCar(String image);
+    //变灰处理
+    public native int[] gray(int[] buf, int w, int h);
 }
