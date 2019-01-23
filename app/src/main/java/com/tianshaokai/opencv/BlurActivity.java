@@ -9,9 +9,9 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class GrayActivity extends AppCompatActivity {
+public class BlurActivity extends AppCompatActivity {
 
-    private static final String TAG = "GrayActivity";
+    private static final String TAG = "BlurActivity";
     private ImageView ivImage1, ivImage2;
     private TextView tvChange;
     private Bitmap bitmap;
@@ -23,7 +23,7 @@ public class GrayActivity extends AppCompatActivity {
         ivImage1 = findViewById(R.id.ivImage1);
         ivImage2 = findViewById(R.id.ivImage2);
         tvChange = findViewById(R.id.tvChange);
-        tvChange.setText("变灰后");
+        tvChange.setText("模糊效果");
 
         ThreadManagerUtils.getSingleThread().execute(new Runnable() {
             @Override
@@ -44,7 +44,7 @@ public class GrayActivity extends AppCompatActivity {
                 int[] pixels = new int[width * height];
                 bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
 
-                int[] resultPixes = OpenCVLearn.gray(pixels, width, height);
+                int[] resultPixes = OpenCVLearn.blur(pixels, width, height);
                 final Bitmap result = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
                 result.setPixels(resultPixes, 0, width, 0, 0, width, height);
                 MainThread.run(new Runnable() {

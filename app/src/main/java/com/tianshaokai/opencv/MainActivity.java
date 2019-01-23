@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE};
 
-    private Button btnGray;
+    private Button btnGray, btnBlur;
     private Context mContext;
 
     @Override
@@ -27,9 +27,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mContext = this;
         btnGray = findViewById(R.id.btnGray);
+        btnBlur = findViewById(R.id.btnBlur);
 
 
         btnGray.setOnClickListener(onClickListener);
+        btnBlur.setOnClickListener(onClickListener);
         // 版本判断。当手机系统大于 23 时，才有必要去判断权限是否获取
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // 检查该权限是否已经获取
@@ -48,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
             switch (v.getId()) {
                 case R.id.btnGray: {
                     Intent intent = new Intent(mContext, GrayActivity.class);
+                    startActivity(intent);
+                    break;
+                }
+                case R.id.btnBlur: {
+                    Intent intent = new Intent(mContext, BlurActivity.class);
                     startActivity(intent);
                     break;
                 }

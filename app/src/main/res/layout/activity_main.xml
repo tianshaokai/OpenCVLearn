@@ -9,8 +9,14 @@
 
     <Button
         android:id="@+id/btnGray"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="灰色处理" />
+
+    <Button
+        android:id="@+id/btnBlur"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="模糊处理" />
 
 </LinearLayout>

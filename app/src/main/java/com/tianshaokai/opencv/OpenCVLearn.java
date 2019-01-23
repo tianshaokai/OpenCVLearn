@@ -7,4 +7,7 @@ public class OpenCVLearn {
 
     //变灰处理
     public static native int[] gray(int[] buf, int w, int h);
+
+
+    public static native int[] blur(int[] buf, int w, int h);
 }
