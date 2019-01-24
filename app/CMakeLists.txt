@@ -20,6 +20,8 @@ add_library(opencv_java4 SHARED IMPORTED )
 #指定库路径
 set_target_properties(opencv_java4 PROPERTIES IMPORTED_LOCATION ${LIBRARY_DIRS}/${ANDROID_ABI}/libopencv_java4.so)
 
+find_library(log-lib log)
+
 target_link_libraries(
         opencv_learn
 
