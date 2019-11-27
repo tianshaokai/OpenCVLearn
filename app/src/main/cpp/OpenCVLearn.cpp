@@ -37,7 +37,7 @@ Java_com_tianshaokai_opencv_OpenCVLearn_blur
     if(srcBuf == NULL) {
         return 0;
     }
-    Mat srcImg(w, h, CV_8UC4, (unsigned char *) srcBuf);
+    Mat srcImg(h, w, CV_8UC4, (unsigned char *) srcBuf);
 
     /**
     * 高斯滤波
@@ -48,7 +48,7 @@ Java_com_tianshaokai_opencv_OpenCVLearn_blur
     * 第五个参数：sigmaY代表高斯函数在Y方向的标准偏差，有默认值为0
     * 第六个参数：边界模式，使用默认值BORDER_DEFAULT
     */
-    GaussianBlur(srcImg, srcImg, Size(31, 31), 0);
+    GaussianBlur(srcImg, srcImg, Size(51, 51), 20, 20);
 
     /**
       * opencv中方框滤波函数
@@ -83,8 +83,6 @@ Java_com_tianshaokai_opencv_OpenCVLearn_blur
      */
 //    medianBlur(srcImg,srcImg,31);
 
-    // 将opencv图片转化成c图片数据，RGBA转化成灰度图4通道颜色数据
-//    cvtColor(grayImage, grayImage, cv::COLOR_RGBA2GRAY, 4);
     int size = w * h;
     //因为new出来的空间还在c中，java是不能直接使用的。
     jintArray result = env->NewIntArray(size);

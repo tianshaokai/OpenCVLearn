@@ -45,14 +45,14 @@ public class BlurActivity extends AppCompatActivity {
                 bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
 
                 int[] resultPixes = OpenCVLearn.blur(pixels, width, height);
-                final Bitmap result = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-                result.setPixels(resultPixes, 0, width, 0, 0, width, height);
+                final Bitmap resultBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+                resultBitmap.setPixels(resultPixes, 0, width, 0, 0, width, height);
                 MainThread.run(new Runnable() {
                     @Override
                     public void run() {
                         long performance = System.currentTimeMillis() - current;
                         Log.d(TAG, "NDK耗时"+ String.valueOf(performance) + " 毫秒");
-                        ivImage2.setImageBitmap(result);
+                        ivImage2.setImageBitmap(resultBitmap);
                     }
                 });
             }

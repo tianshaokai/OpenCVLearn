@@ -28,4 +28,5 @@ target_link_libraries(
         # Links the target library to the log library
         # included in the NDK.
         opencv_java4
+        jnigraphics
         ${log-lib})
