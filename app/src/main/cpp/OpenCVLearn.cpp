@@ -15,7 +15,7 @@ Java_com_tianshaokai_opencv_OpenCVLearn_gray
     }
     int size = w * h;
     //CV_8UC4--创建--8位无符号的四通道---带透明色的RGB图像
-    Mat srcImg(w, h, CV_8UC4, (unsigned char *) srcBuf);
+    Mat srcImg(h, w, CV_8UC4, (unsigned char *) srcBuf);
     Mat grayImage;
     cvtColor(srcImg, grayImage, COLOR_BGRA2GRAY);
 
