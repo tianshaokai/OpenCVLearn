@@ -23,6 +23,8 @@
 
         <activity android:name=".GrayActivity"/>
         <activity android:name=".BlurActivity"/>
+        <activity android:name=".BlurActivity2"/>
+        <activity android:name=".FaceDetectorActivity" />
     </application>
 
 </manifest>

@@ -19,4 +19,16 @@
         android:layout_height="wrap_content"
         android:text="模糊处理" />
 
+    <Button
+        android:id="@+id/btnBlur2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="模糊处理2" />
+
+    <Button
+        android:id="@+id/btnFace"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="人脸识别" />
+
 </LinearLayout>

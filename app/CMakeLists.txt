@@ -6,6 +6,8 @@ set(CMAKE_VERBOSE_MAKEFILE on)
 
 # 编译library # SHARED模式会编译so文件，STATIC模式不会编译
 add_library(opencv_learn SHARED
+        src/main/cpp/BitmapMatUtil.cpp
+        src/main/cpp/FaceDetector.cpp
         src/main/cpp/OpenCVLearn.cpp)
 
 #设置库目录，以下会用到

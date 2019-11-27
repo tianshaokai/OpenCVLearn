@@ -2,6 +2,8 @@
 #include <string>
 #include "opencv2/opencv.hpp"
 #include "android_log.h"
+#include "FaceDetector.h"
+#include "BitmapMatUtil.h"
 
 using namespace cv;
 
@@ -83,6 +85,8 @@ Java_com_tianshaokai_opencv_OpenCVLearn_blur
      */
 //    medianBlur(srcImg,srcImg,31);
 
+
+    cvtColor(srcImg, srcImg, COLOR_RGBA2GRAY, 4);
     int size = w * h;
     //因为new出来的空间还在c中，java是不能直接使用的。
     jintArray result = env->NewIntArray(size);
@@ -113,3 +117,95 @@ Java_com_tianshaokai_opencv_OpenCVLearn_blur
 
     return result;
 }
+
+extern "C" JNIEXPORT jintArray JNICALL
+Java_com_tianshaokai_opencv_OpenCVLearn_blur2(JNIEnv *env, jclass clazz, jintArray buf, jint w, jint h) {
+// 获得图片矩阵数组指针
+    jint *srcBuf = env->GetIntArrayElements(buf, JNI_FALSE);
+    if (srcBuf == nullptr) {
+        return 0;
+    }
+
+    // 根据指针创建一个Mat 四个颜色通道
+    Mat imgData(h, w, CV_8UC4, (unsigned char *) srcBuf);
+
+    //变量定义
+    Mat src_gray, dst, abs_dst;
+    //使用高斯滤波消除噪声
+    GaussianBlur(imgData, imgData, Size(3, 3), 0, 0, BORDER_DEFAULT);
+    //转换为灰度图
+    cvtColor(imgData, src_gray, COLOR_RGBA2GRAY);
+    //使用Laplace函数
+    Laplacian(src_gray, dst, CV_16S, 3, 1, 0, BORDER_DEFAULT);
+    //计算绝对值
+    convertScaleAbs(dst, abs_dst);
+
+    // 恢复格式
+    //cvtColor(abs_dst, imgData, COLOR_GRAY2BGRA);
+
+    Mat dstResult;
+    //将dstImage内所有元素为0
+    dstResult = Scalar::all(0);
+
+    //使用Laplacian算子输出的边缘图，abs_dst作为掩码，来将原图imgData拷贝到目标图dstResult中
+    imgData.copyTo(dstResult, abs_dst);
+
+    int size = w * h;
+
+    jint *re = (jint *) dstResult.data;
+
+    jintArray result = env->NewIntArray(size);
+    env->SetIntArrayRegion(result, 0, size, re);
+    env->ReleaseIntArrayElements(buf, srcBuf, 0);
+    return result;
+}
+
+extern "C" JNIEXPORT jint JNICALL
+Java_com_tianshaokai_opencv_OpenCVLearn_faceDetector(JNIEnv *env, jclass clazz, jobject bitmap,
+                                                     jobject argb8888, jstring _path) {
+    const char *path = env->GetStringUTFChars(_path, 0);//文件路径
+    FaceDetector::loadCascade(path);//加载文件
+
+    Mat srcMat;//图片源矩阵
+    srcMat = BitmapMatUtil::bitmap2Mat(env, bitmap);//图片源矩阵初始化
+    auto faces = FaceDetector::detectorFace(srcMat);//识别图片源矩阵，返回矩形集
+
+    for (Rect faceRect : faces) {// 在人脸部分画矩形
+        rectangle(srcMat, faceRect, Scalar(0, 253, 255), 5);//在srcMat上画矩形
+        BitmapMatUtil::mat2Bitmap(env, srcMat, bitmap);// 把mat放回bitmap中
+    }
+    env->ReleaseStringUTFChars(_path, path);//释放指针
+    return faces.size();//返回尺寸
+}
+
+//extern "C" JNIEXPORT jobject JNICALL
+//Java_com_tianshaokai_opencv_OpenCVLearn_faceDetectorResize(JNIEnv *env, jclass clazz,
+//                                                           jobject bitmap, jobject argb8888,
+//                                                           jstring path_, jint width, jint height) {
+//    const char *path = env->GetStringUTFChars(path_, 0);//文件路径
+//    FaceDetector::loadCascade(path);//加载文件
+//
+//    Mat srcMat;//图片源矩阵
+//    srcMat = BitmapMatUtil::bitmap2Mat(env, bitmap);//图片源矩阵初始化
+//    auto faces = FaceDetector::detectorFace(srcMat);//识别图片源矩阵，返回矩形集
+//    Rect faceRect = faces[0];
+//    rectangle(srcMat, faceRect, Scalar(0, 253, 255), 5);//在srcMat上画矩形
+//    //识别目标区域区域---------------------------
+//    Rect zone;
+//    int w = faceRect.width;//宽
+//    int h = faceRect.height;//高
+//    int offSetLeft = w / 4;//x偏移
+//    int offSetTop = h * 0.5;
+//    zone.x = faceRect.x - offSetLeft;
+//    zone.y = faceRect.y - offSetTop;
+//    zone.width = w / 4 * 2 + w;
+//    zone.height = static_cast<int>(zone.width * (height * 1.0 / width));
+//    rectangle(srcMat, zone, Scalar(253, 95, 47), 5);//在srcMat上画矩形
+//
+//    env->ReleaseStringUTFChars(path_, path);//释放指针
+//
+//    resize(srcMat(zone), srcMat, Size(width, height));//<----重定义尺寸
+//
+////    return createBitmap(env, srcMat, argb8888);//返回图片
+//    return nullptr;
+//}
