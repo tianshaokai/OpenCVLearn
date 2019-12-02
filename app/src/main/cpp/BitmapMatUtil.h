@@ -19,6 +19,8 @@ public:
 
     static void mat2Bitmap(JNIEnv *env, Mat src, jobject bitmap);
 
+    static jobject createBitmap(JNIEnv *env, Mat src, jobject config);
+
 public:
     BitmapMatUtil();
     ~BitmapMatUtil();

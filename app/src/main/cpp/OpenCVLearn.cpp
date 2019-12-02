@@ -178,34 +178,33 @@ Java_com_tianshaokai_opencv_OpenCVLearn_faceDetector(JNIEnv *env, jclass clazz, 
     return faces.size();//返回尺寸
 }
 
-//extern "C" JNIEXPORT jobject JNICALL
-//Java_com_tianshaokai_opencv_OpenCVLearn_faceDetectorResize(JNIEnv *env, jclass clazz,
-//                                                           jobject bitmap, jobject argb8888,
-//                                                           jstring path_, jint width, jint height) {
-//    const char *path = env->GetStringUTFChars(path_, 0);//文件路径
-//    FaceDetector::loadCascade(path);//加载文件
-//
-//    Mat srcMat;//图片源矩阵
-//    srcMat = BitmapMatUtil::bitmap2Mat(env, bitmap);//图片源矩阵初始化
-//    auto faces = FaceDetector::detectorFace(srcMat);//识别图片源矩阵，返回矩形集
-//    Rect faceRect = faces[0];
-//    rectangle(srcMat, faceRect, Scalar(0, 253, 255), 5);//在srcMat上画矩形
-//    //识别目标区域区域---------------------------
-//    Rect zone;
-//    int w = faceRect.width;//宽
-//    int h = faceRect.height;//高
-//    int offSetLeft = w / 4;//x偏移
-//    int offSetTop = h * 0.5;
-//    zone.x = faceRect.x - offSetLeft;
-//    zone.y = faceRect.y - offSetTop;
-//    zone.width = w / 4 * 2 + w;
-//    zone.height = static_cast<int>(zone.width * (height * 1.0 / width));
-//    rectangle(srcMat, zone, Scalar(253, 95, 47), 5);//在srcMat上画矩形
-//
-//    env->ReleaseStringUTFChars(path_, path);//释放指针
-//
-//    resize(srcMat(zone), srcMat, Size(width, height));//<----重定义尺寸
-//
-////    return createBitmap(env, srcMat, argb8888);//返回图片
-//    return nullptr;
-//}
+extern "C" JNIEXPORT jobject JNICALL
+Java_com_tianshaokai_opencv_OpenCVLearn_faceDetectorResize(JNIEnv *env, jclass clazz,
+                                                           jobject bitmap, jobject argb8888,
+                                                           jstring path_, jint width, jint height) {
+    const char *path = env->GetStringUTFChars(path_, 0);//文件路径
+    FaceDetector::loadCascade(path);//加载文件
+
+    Mat srcMat;//图片源矩阵
+    srcMat = BitmapMatUtil::bitmap2Mat(env, bitmap);//图片源矩阵初始化
+    auto faces = FaceDetector::detectorFace(srcMat);//识别图片源矩阵，返回矩形集
+    Rect faceRect = faces[0];
+    rectangle(srcMat, faceRect, Scalar(0, 253, 255), 5);//在srcMat上画矩形
+    //识别目标区域区域---------------------------
+    Rect zone;
+    int w = faceRect.width;//宽
+    int h = faceRect.height;//高
+    int offSetLeft = w / 4;//x偏移
+    int offSetTop = static_cast<int>(h * 0.5);
+    zone.x = faceRect.x - offSetLeft;
+    zone.y = faceRect.y - offSetTop;
+    zone.width = w / 4 * 2 + w;
+    zone.height = static_cast<int>(zone.width * (height * 1.0 / width));
+    rectangle(srcMat, zone, Scalar(253, 95, 47), 5);//在srcMat上画矩形
+
+    env->ReleaseStringUTFChars(path_, path);//释放指针
+
+    resize(srcMat(zone), srcMat, Size(width, height));//<----重定义尺寸
+
+    return BitmapMatUtil::createBitmap(env, srcMat, argb8888);//返回图片
+}

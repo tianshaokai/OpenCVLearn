@@ -69,6 +69,16 @@ public class FaceDetectorActivity extends AppCompatActivity {
                         Toast.makeText(FaceDetectorActivity.this, "检测到 " + count + " 个人脸", Toast.LENGTH_SHORT).show();
                     }
                 });
+
+
+                final Bitmap bitmapResult = OpenCVLearn.faceDetectorResize(bitmap, Bitmap.Config.ARGB_8888,
+                        mCascadeFile.getPath(),413,626);
+                MainThread.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        ivImage2.setImageBitmap(bitmapResult);
+                    }
+                });
             }
         });
 

@@ -68,4 +68,14 @@ void BitmapMatUtil::mat2Bitmap(JNIEnv *env, Mat src, jobject bitmap) {
     AndroidBitmap_unlockPixels(env, bitmap);
 }
 
+jobject BitmapMatUtil::createBitmap(JNIEnv *env, Mat src, jobject config) {
+    jclass java_bitmap_class = (jclass) env->FindClass("android/graphics/Bitmap");//类名
+    jmethodID mid = env->GetStaticMethodID(java_bitmap_class, "createBitmap",//获取方法
+                                           "(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;");
+    jobject bitmap = env->CallStaticObjectMethod(java_bitmap_class, mid, src.cols, src.rows,
+                                                 config);
+    mat2Bitmap(env, src, bitmap);
+    return bitmap;
+}
+
 
