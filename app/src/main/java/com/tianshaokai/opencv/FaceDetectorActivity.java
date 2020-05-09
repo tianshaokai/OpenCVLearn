@@ -42,44 +42,28 @@ public class FaceDetectorActivity extends AppCompatActivity {
         tvChange.setText("识别");
 
 
-        ThreadManagerUtils.getSingleThread().execute(new Runnable() {
-            @Override
-            public void run() {
-                final long current = System.currentTimeMillis();
-                bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.image1);
+        ThreadManagerUtils.getSingleThread().execute(() -> {
+            final long current = System.currentTimeMillis();
+            bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.image1);
 
-                //人脸检测
-                copyCascadeFile(R.raw.lbpcascade_frontalface, "lbpcascade_frontalface.xml");
+            //人脸检测
+            copyCascadeFile(R.raw.lbpcascade_frontalface, "lbpcascade_frontalface.xml");
 //                copyCascadeFile(R.raw.lbpcascade_frontalcatface, "lbpcascade_frontalcatface.xml");
 //                copyCascadeFile(R.raw.lbpcascade_frontalface_improved, "lbpcascade_frontalface_improved.xml");
 //                copyCascadeFile(R.raw.lbpcascade_profileface, "lbpcascade_profileface.xml");
 //                copyCascadeFile(R.raw.lbpcascade_silverware, "lbpcascade_silverware.xml");
 
-                MainThread.run(new Runnable() {
-                    @Override
-                    public void run() {
-                        ivImage1.setImageBitmap(bitmap);
-                    }
-                });
-                final int count = OpenCVLearn.faceDetector(bitmap, Bitmap.Config.ARGB_8888, mCascadeFile.getPath());
+            MainThread.run(() -> ivImage1.setImageBitmap(bitmap));
 
-                MainThread.run(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(FaceDetectorActivity.this, "检测到 " + count + " 个人脸", Toast.LENGTH_SHORT).show();
-                    }
-                });
+            final int count = OpenCVLearn.faceDetector(bitmap, Bitmap.Config.ARGB_8888, mCascadeFile.getPath());
+
+            MainThread.run(() -> Toast.makeText(FaceDetectorActivity.this, "检测到 " + count + " 个人脸", Toast.LENGTH_SHORT).show());
 
 
-                final Bitmap bitmapResult = OpenCVLearn.faceDetectorResize(bitmap, Bitmap.Config.ARGB_8888,
-                        mCascadeFile.getPath(),413,626);
-                MainThread.run(new Runnable() {
-                    @Override
-                    public void run() {
-                        ivImage2.setImageBitmap(bitmapResult);
-                    }
-                });
-            }
+            final Bitmap bitmapResult = OpenCVLearn.faceDetectorResize(bitmap, Bitmap.Config.ARGB_8888,
+                    mCascadeFile.getPath(),413,626);
+
+            MainThread.run(() -> ivImage2.setImageBitmap(bitmapResult));
         });
 
     }
