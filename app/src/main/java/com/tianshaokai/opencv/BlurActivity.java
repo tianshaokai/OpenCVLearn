@@ -52,12 +52,12 @@ public class BlurActivity extends AppCompatActivity {
                 ThreadManagerUtils.getSingleThread().execute(this::blurGaussian);
                 break;
 
-            case R.id.button2:
+            case R.id.button2: //方框
                 ThreadManagerUtils.getSingleThread().execute(this::blurBoxFilter);
                 break;
 
             case R.id.button3:
-                ThreadManagerUtils.getSingleThread().execute(this::blur);
+                ThreadManagerUtils.getSingleThread().execute(this::blurMean);
                 break;
 
             case R.id.button4:
@@ -84,6 +84,9 @@ public class BlurActivity extends AppCompatActivity {
         MainThread.run(() -> ivImage2.setImageBitmap(resultBitmap));
     }
 
+    /**
+     * 方框 滤波
+     */
     private void blurBoxFilter() {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
@@ -99,14 +102,14 @@ public class BlurActivity extends AppCompatActivity {
     }
 
 
-    private void blur() {
+    private void blurMean() {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
 
         int[] pixels = new int[width * height];
         bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
 
-        int[] resultPixes = OpenCVLearn.blur(pixels, width, height);
+        int[] resultPixes = OpenCVLearn.blurMean(pixels, width, height);
         final Bitmap resultBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
         resultBitmap.setPixels(resultPixes, 0, width, 0, 0, width, height);
 

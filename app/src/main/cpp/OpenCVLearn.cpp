@@ -90,8 +90,8 @@ Java_com_tianshaokai_opencv_OpenCVLearn_blurBoxFilter
       *             中用到的图像倒数的协方差矩阵（covariance matrices of image derivatives）如果我们要在可变的窗口中计算像素总和，可以使用integral()函数
       * 第七个参数：边界模式，默认值BORDER_DEFAULT
       */
-    boxFilter(srcImg,srcImg,-1, cv::Size(30,30));
-
+    //使用这个方法，和均值滤波效果一样
+    boxFilter(srcImg, srcImg, -1, Size(20, 20));
 
     cvtColor(srcImg, srcImg, COLOR_RGBA2GRAY, 4);
 
@@ -109,7 +109,7 @@ Java_com_tianshaokai_opencv_OpenCVLearn_blurBoxFilter
 
 
 extern "C" JNIEXPORT jintArray JNICALL
-Java_com_tianshaokai_opencv_OpenCVLearn_blur
+Java_com_tianshaokai_opencv_OpenCVLearn_blurMean
         (JNIEnv *env, jclass, jintArray buf, jint w, jint h) {
     jint *srcBuf = env->GetIntArrayElements(buf, JNI_FALSE);
     if(srcBuf == NULL) {
@@ -125,7 +125,7 @@ Java_com_tianshaokai_opencv_OpenCVLearn_blur
      * 第四个参数：锚点的位置，就是我们要进行处理的点，默认值（-1，-1）表示锚点在核的中心
      * 第五个参数：边界模式，默认值BORDER_DEFAULT
      */
-    blur(srcImg,srcImg, cv::Size(30,30));
+    blur(srcImg, srcImg, Size(30, 30));
 
     cvtColor(srcImg, srcImg, COLOR_RGBA2GRAY, 4);
 
@@ -179,7 +179,6 @@ Java_com_tianshaokai_opencv_OpenCVLearn_blurBilateralFilter
         return 0;
     }
     Mat srcImg(h, w, CV_8UC4, (unsigned char *) srcBuf);
-
 
     cvtColor(srcImg, srcImg, COLOR_RGBA2RGB);
 

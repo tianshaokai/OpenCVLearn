@@ -12,7 +12,7 @@ public class OpenCVLearn {
 
     public static native int[] blurGaussian(int[] buf, int w, int h);
     public static native int[] blurBoxFilter(int[] buf, int w, int h);
-    public static native int[] blur(int[] buf, int w, int h);
+    public static native int[] blurMean(int[] buf, int w, int h);
     public static native int[] blurMedian(int[] buf, int w, int h);
     public static native int[] blurBilateralFilter(int[] buf, int w, int h);
 

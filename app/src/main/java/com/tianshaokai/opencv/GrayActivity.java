@@ -26,7 +26,6 @@ public class GrayActivity extends AppCompatActivity {
         tvChange.setText("变灰后");
 
         ThreadManagerUtils.getSingleThread().execute(() -> {
-            final long current = System.currentTimeMillis();
             bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.image1);
 
             MainThread.run(() -> ivImage1.setImageBitmap(bitmap));
@@ -41,11 +40,7 @@ public class GrayActivity extends AppCompatActivity {
             final Bitmap result = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
             result.setPixels(resultPixes, 0, width, 0, 0, width, height);
 
-            MainThread.run(() -> {
-                long performance = System.currentTimeMillis() - current;
-                Log.d(TAG, "NDK耗时"+ String.valueOf(performance) + " 毫秒");
-                ivImage2.setImageBitmap(result);
-            });
+            MainThread.run(() -> ivImage2.setImageBitmap(result));
         });
     }
 }
