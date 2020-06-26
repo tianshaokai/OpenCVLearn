@@ -1,4 +1,4 @@
-package com.tianshaokai.opencv;
+package com.tianshaokai.opencv.ui;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -11,6 +11,11 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.annotation.RawRes;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.tianshaokai.opencv.MainThread;
+import com.tianshaokai.opencv.OpenCVLearn;
+import com.tianshaokai.opencv.R;
+import com.tianshaokai.opencv.ThreadManagerUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;

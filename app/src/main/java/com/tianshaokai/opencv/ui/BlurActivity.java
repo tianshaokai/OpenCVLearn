@@ -1,4 +1,4 @@
-package com.tianshaokai.opencv;
+package com.tianshaokai.opencv.ui;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +9,11 @@ import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.tianshaokai.opencv.MainThread;
+import com.tianshaokai.opencv.OpenCVLearn;
+import com.tianshaokai.opencv.R;
+import com.tianshaokai.opencv.ThreadManagerUtils;
 
 public class BlurActivity extends AppCompatActivity {
 

@@ -13,7 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,10 +21,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".GrayActivity"/>
-        <activity android:name=".BlurActivity"/>
-        <activity android:name=".BlurActivity2"/>
-        <activity android:name=".FaceDetectorActivity" />
+        <activity android:name=".ui.GrayActivity"/>
+        <activity android:name=".ui.BlurActivity"/>
+        <activity android:name=".ui.BlurActivity2"/>
+        <activity android:name=".ui.FaceDetectorActivity" />
+        <activity android:name=".ui.IDCardActivity" />
     </application>
 
 </manifest>

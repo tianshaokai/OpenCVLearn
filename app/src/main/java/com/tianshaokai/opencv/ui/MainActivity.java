@@ -1,4 +1,4 @@
-package com.tianshaokai.opencv;
+package com.tianshaokai.opencv.ui;
 
 import android.Manifest;
 import android.content.Context;
@@ -12,13 +12,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.tianshaokai.opencv.R;
+
 public class MainActivity extends AppCompatActivity {
 
     private String[] permission = new String[]{Manifest.permission.CAMERA,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE};
 
-    private Button btnGray, btnBlur, btnBlur2, btnFace;
+    private Button btnGray, btnBlur, btnBlur2, btnFace, btnTest;
     private Context mContext;
 
     @Override
@@ -30,12 +32,14 @@ public class MainActivity extends AppCompatActivity {
         btnBlur = findViewById(R.id.btnBlur);
         btnBlur2 = findViewById(R.id.btnBlur2);
         btnFace = findViewById(R.id.btnFace);
+        btnTest = findViewById(R.id.btnTest);
 
 
         btnGray.setOnClickListener(onClickListener);
         btnBlur.setOnClickListener(onClickListener);
         btnBlur2.setOnClickListener(onClickListener);
         btnFace.setOnClickListener(onClickListener);
+        btnTest.setOnClickListener(onClickListener);
         // 版本判断。当手机系统大于 23 时，才有必要去判断权限是否获取
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // 检查该权限是否已经获取
@@ -69,6 +73,11 @@ public class MainActivity extends AppCompatActivity {
                 }
                 case R.id.btnFace: {
                     Intent intent = new Intent(mContext, FaceDetectorActivity.class);
+                    startActivity(intent);
+                    break;
+                }
+                case R.id.btnTest: {
+                    Intent intent = new Intent(mContext, IDCardActivity.class);
                     startActivity(intent);
                     break;
                 }

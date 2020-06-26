@@ -12,69 +12,62 @@ BitmapMatUtil::~BitmapMatUtil() {
 
 }
 
-Mat BitmapMatUtil::bitmap2Mat(JNIEnv *env, jobject bitmap) {
+Mat BitmapMatUtil::bitmapToMat(JNIEnv *env, jobject bitmap) {
     // 1. 获取图片的宽高，以及格式信息
     AndroidBitmapInfo info;
     AndroidBitmap_getInfo(env, bitmap, &info);
     void *pixels;
     AndroidBitmap_lockPixels(env, bitmap, &pixels);
-
     Mat mat;
     if (info.format == ANDROID_BITMAP_FORMAT_RGBA_8888) {
-        LOGE("nMatToBitmap: CV_8UC4 -> RGBA_8888");
+        LOGD("nMatToBitmap: CV_8UC4 -> RGBA_8888");
         mat = Mat(info.height, info.width, CV_8UC4, pixels);
-    } else {
-        LOGE("nMatToBitmap: CV_8UC2 -> RGBA_565");
+    } else if (info.format == ANDROID_BITMAP_FORMAT_RGB_565) {
+        LOGD("nMatToBitmap: CV_8UC2 -> RGBA_565");
         mat = Mat(info.height, info.width, CV_8UC2, pixels);
     }
     AndroidBitmap_unlockPixels(env, bitmap);
     return mat;
 }
 
-void BitmapMatUtil::mat2Bitmap(JNIEnv *env, Mat src, jobject bitmap) {
+int BitmapMatUtil::matToBitmap(JNIEnv *env, Mat &mat, jobject bitmap) {
     // 1. 获取图片的宽高，以及格式信息
     AndroidBitmapInfo info;
     AndroidBitmap_getInfo(env, bitmap, &info);
     void *pixels;
     AndroidBitmap_lockPixels(env, bitmap, &pixels);
+    LOGD("开始Mat 转换为 bitmap 宽度: %d, 高度: %d", mat.cols, mat.rows);
 
     if (info.format == ANDROID_BITMAP_FORMAT_RGBA_8888) {
         Mat tmp(info.height, info.width, CV_8UC4, pixels);
-        if (src.type() == CV_8UC1) {
-            LOGE("nMatToBitmap: CV_8UC1 -> RGBA_8888");
-            cvtColor(src, tmp, COLOR_GRAY2RGBA);
-        } else if (src.type() == CV_8UC3) {
-            LOGE("nMatToBitmap: CV_8UC3 -> RGBA_8888");
-            cvtColor(src, tmp, COLOR_RGB2RGBA);
-        } else if (src.type() == CV_8UC4) {
-            LOGE("nMatToBitmap: CV_8UC4 -> RGBA_8888");
-            src.copyTo(tmp);
+        if (mat.type() == CV_8UC1) {
+            cvtColor(mat, tmp, COLOR_GRAY2RGBA);
+        } else if (mat.type() == CV_8UC2) {
+            cvtColor(mat, tmp, COLOR_BGR5652BGRA);
+        } else if (mat.type() == CV_8UC4) {
+            mat.copyTo(tmp);
         }
-    } else {
-        // info.format == ANDROID_BITMAP_FORMAT_RGB_565
+    } else if (info.format == ANDROID_BITMAP_FORMAT_RGB_565) {
         Mat tmp(info.height, info.width, CV_8UC2, pixels);
-        if (src.type() == CV_8UC1) {
-            LOGE("nMatToBitmap: CV_8UC1 -> RGB_565");
-            cvtColor(src, tmp, COLOR_GRAY2BGR565);
-        } else if (src.type() == CV_8UC3) {
-            LOGE("nMatToBitmap: CV_8UC3 -> RGB_565");
-            cvtColor(src, tmp, COLOR_RGB2BGR565);
-        } else if (src.type() == CV_8UC4) {
-            LOGE("nMatToBitmap: CV_8UC4 -> RGB_565");
-            cvtColor(src, tmp, COLOR_RGBA2BGR565);
+        if (mat.type() == CV_8UC1) {
+            cvtColor(mat, tmp, COLOR_GRAY2BGR565);
+        } else if (mat.type() == CV_8UC2) {
+            mat.copyTo(tmp);
+        } else if (mat.type() == CV_8UC4) {
+            cvtColor(mat, tmp, COLOR_RGBA2BGR565);
         }
     }
-
     AndroidBitmap_unlockPixels(env, bitmap);
+    return 0;
 }
 
-jobject BitmapMatUtil::createBitmap(JNIEnv *env, Mat src, jobject config) {
+jobject BitmapMatUtil::createBitmap(JNIEnv *env, Mat &mat, jobject config) {
     jclass java_bitmap_class = (jclass) env->FindClass("android/graphics/Bitmap");//类名
     jmethodID mid = env->GetStaticMethodID(java_bitmap_class, "createBitmap",//获取方法
                                            "(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;");
-    jobject bitmap = env->CallStaticObjectMethod(java_bitmap_class, mid, src.cols, src.rows,
+    jobject bitmap = env->CallStaticObjectMethod(java_bitmap_class, mid, mat.cols, mat.rows,
                                                  config);
-    mat2Bitmap(env, src, bitmap);
+    matToBitmap(env, mat, bitmap);
     return bitmap;
 }
 

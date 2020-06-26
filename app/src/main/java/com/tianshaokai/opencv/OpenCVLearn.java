@@ -22,4 +22,7 @@ public class OpenCVLearn {
     public static native int faceDetector(Bitmap bitmap, Bitmap.Config argb8888, String path);
 
     public static native Bitmap faceDetectorResize(Bitmap bitmap, Bitmap.Config argb8888, String path, int width, int height);
+
+
+    public static native Bitmap getIdCardNumber(Bitmap bitmap, Bitmap.Config argb8888);
 }

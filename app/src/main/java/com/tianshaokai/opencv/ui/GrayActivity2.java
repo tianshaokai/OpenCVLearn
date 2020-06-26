@@ -1,15 +1,19 @@
-package com.tianshaokai.opencv;
+package com.tianshaokai.opencv.ui;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class GrayActivity extends AppCompatActivity {
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.tianshaokai.opencv.MainThread;
+import com.tianshaokai.opencv.R;
+import com.tianshaokai.opencv.ThreadManagerUtils;
+
+public class GrayActivity2 extends AppCompatActivity {
 
     private static final String TAG = "GrayActivity";
     private ImageView ivImage1, ivImage2;
@@ -30,17 +34,7 @@ public class GrayActivity extends AppCompatActivity {
 
             MainThread.run(() -> ivImage1.setImageBitmap(bitmap));
 
-            int width = bitmap.getWidth();
-            int height = bitmap.getHeight();
 
-            int[] pixels = new int[width * height];
-            bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
-
-            int[] resultPixes = OpenCVLearn.gray(pixels, width, height);
-            final Bitmap result = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-            result.setPixels(resultPixes, 0, width, 0, 0, width, height);
-
-            MainThread.run(() -> ivImage2.setImageBitmap(result));
         });
     }
 }

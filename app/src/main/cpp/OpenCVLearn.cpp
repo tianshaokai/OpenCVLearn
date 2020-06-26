@@ -255,12 +255,12 @@ Java_com_tianshaokai_opencv_OpenCVLearn_faceDetector(JNIEnv *env, jclass clazz, 
     FaceDetector::loadCascade(path);//加载文件
 
     Mat srcMat;//图片源矩阵
-    srcMat = BitmapMatUtil::bitmap2Mat(env, bitmap);//图片源矩阵初始化
+    srcMat = BitmapMatUtil::bitmapToMat(env, bitmap);//图片源矩阵初始化
     auto faces = FaceDetector::detectorFace(srcMat);//识别图片源矩阵，返回矩形集
 
     for (Rect faceRect : faces) {// 在人脸部分画矩形
         rectangle(srcMat, faceRect, Scalar(0, 253, 255), 5);//在srcMat上画矩形
-        BitmapMatUtil::mat2Bitmap(env, srcMat, bitmap);// 把mat放回bitmap中
+        BitmapMatUtil::matToBitmap(env, srcMat, bitmap);// 把mat放回bitmap中
     }
     env->ReleaseStringUTFChars(_path, path);//释放指针
     return faces.size();//返回尺寸
@@ -274,7 +274,7 @@ Java_com_tianshaokai_opencv_OpenCVLearn_faceDetectorResize(JNIEnv *env, jclass c
     FaceDetector::loadCascade(path);//加载文件
 
     Mat srcMat;//图片源矩阵
-    srcMat = BitmapMatUtil::bitmap2Mat(env, bitmap);//图片源矩阵初始化
+    srcMat = BitmapMatUtil::bitmapToMat(env, bitmap);//图片源矩阵初始化
     auto faces = FaceDetector::detectorFace(srcMat);//识别图片源矩阵，返回矩形集
     Rect faceRect = faces[0];
     rectangle(srcMat, faceRect, Scalar(0, 253, 255), 5);//在srcMat上画矩形
@@ -295,4 +295,52 @@ Java_com_tianshaokai_opencv_OpenCVLearn_faceDetectorResize(JNIEnv *env, jclass c
     resize(srcMat(zone), srcMat, Size(width, height));//<----重定义尺寸
 
     return BitmapMatUtil::createBitmap(env, srcMat, argb8888);//返回图片
+}
+
+extern "C"
+JNIEXPORT jobject JNICALL
+Java_com_tianshaokai_opencv_OpenCVLearn_getIdCardNumber(JNIEnv *env, jclass clazz, jobject bitmap, jobject argb8888) {
+
+    Mat srcImage = BitmapMatUtil::bitmapToMat(env, bitmap);
+    Size fix_size = Size(640, 400);
+
+    resize(srcImage, srcImage, fix_size);
+
+    LOGD("Bitmap 已经成功转换为 Mat, 开始处理图片");
+
+    //灰度化 灰度化处理：图片灰度化处理就是将指定图片每个像素点的RGB三个分量通过一定的算法计算出该像素点的灰度值，使图像只含亮度而不含色彩信息。
+    Mat dstGray;
+    cvtColor(srcImage, dstGray, COLOR_BGR2GRAY);
+
+    //二值化 二值化：二值化处理就是将经过灰度化处理的图片转换为只包含黑色和白色两种颜色的图像，他们之间没有其他灰度的变化。在二值图中用255便是白色，0表示黑色。
+    threshold(dstGray, dstGray, 100, 255, THRESH_BINARY);
+
+    //返回指定形状和尺寸的结构元素
+    Mat erodeElement = getStructuringElement(MORPH_RECT, Size(20, 10));
+    //腐蚀：减少高亮部分  腐蚀：图片的腐蚀就是将得到的二值图中的黑色块进行放大。即连接图片中相邻黑色像素点的元素。通过腐蚀可以把身份证上的身份证号码连接在一起形成一个矩形区域。
+    erode(dstGray, dstGray, erodeElement);
+    //膨胀：增加高亮部分
+//    dilate(dstGray, dstGray, erodeElement);
+
+    //轮廓检测 轮廊检测：图片经过腐蚀操作后相邻点会连接在一起形成一个大的区域，这个时候通过轮廊检测就可以把每个大的区域找出来，这样就可以定位到身份证上面号码的区域。
+    vector<vector<Point>> contours;
+    vector<Vec4i> hierarchy;
+    findContours(dstGray, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
+
+    Mat result;
+    for (int i = 0; i < hierarchy.size(); i++) {
+        Rect rect = boundingRect(contours.at(i));
+        rectangle(srcImage, rect, Scalar(255, 0, 255));
+        // 定义身份证号位置大于图片的一半，并且宽度是高度的6倍以上
+        if (rect.y > srcImage.rows / 2 && rect.width / rect.height > 6) {
+            result = srcImage(rect);
+            break;
+        }
+    }
+    LOGD("图片处理成功，开始返回身份证号图片");
+    jobject jobBitmap = BitmapMatUtil::createBitmap(env, result, argb8888);
+    result.release();
+    dstGray.release();
+    srcImage.release();
+    return jobBitmap;
 }
